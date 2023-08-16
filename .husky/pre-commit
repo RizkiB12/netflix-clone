@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+exec >/dev/tty 2>&1
+
+npx lint-staged ||
+(
+    echo '❌ Failed to commit, please check your linter. 
+    Add changes and try commit again.';
+    false;
+)
+
+# If there is no error linter, the codes will be commited
+echo '🎉Yeayy, there is no error linter in your codes... I am committing this now. 🚀'
