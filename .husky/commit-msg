@@ -1,0 +1,18 @@
+#!/bin/sh
+# discussion: https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
+commit_msg=$(cat $1)
+regex="^\[(FEAT|MOD|FIX|DOCS|STYLE|REFACTOR|PERF|TEST|CHORE)\].*"
+
+if ! echo "$commit_msg" | grep -iqE "$regex"; then
+  echo "❌ Invalid commit message format. Your commit message should start with 
+      [FEAT] for feature additions or enhancements
+      [MOD] for feature modification
+      [FIX] for bug fixes
+      [DOCS] for documentation changes
+      [STYLE] for code style changes
+      [REFACTOR] for refactoring existing code
+      [PERF] for performance improvements
+      [TEST] for test-related changes
+      [CHORE] for maintenance or general project changes that don't fit into any of the other categories."
+  exit 1
+fi
