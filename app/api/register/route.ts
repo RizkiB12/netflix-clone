@@ -1,18 +1,11 @@
 import bcrypt from "bcrypt";
 import { NextApiRequest, NextApiResponse } from "next";
-import prismadb from "@/lib/prismadb";
+import prismadb from "../../../lib/prismadb";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).end();
-    //only want to allow post calls to this slash API slash register route
-  }
-
+export async function POST(req: NextRequest) {
   try {
-    const { email, name, password } = req.body;
+    const { email, name, password } = await req.json();
 
     const existingUser = await prismadb.user.findUnique({
       where: {
@@ -21,7 +14,7 @@ export default async function handler(
     });
 
     if (existingUser) {
-      return res.status(422).json({ error: "Email has taken" });
+      return NextResponse.json({ error: "Email has taken" }, { status: 422 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -36,9 +29,9 @@ export default async function handler(
       },
     });
 
-    return res.status(200).json(user);
+    return NextResponse.json({ data: user }, { status: 200 });
   } catch (error) {
     console.log(error);
-    return res.status(400).end();
+    return NextResponse.json({ error: "Error" }, { status: 400 });
   }
 }
